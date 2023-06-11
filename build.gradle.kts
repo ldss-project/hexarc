@@ -1,21 +1,21 @@
 // ### Project Information #############################################################################################
-private class ProjectInfo { // TODO change project info
+private class ProjectInfo {
     companion object {
-        const val longName: String = "Scala 3 Project Template"
-        const val description: String = "A template for configuring Scala 3 projects."
+        const val longName: String = "HexArc"
+        const val description: String = "Utility module for instantiating services following the best practices of the Hexagonal Architecture Pattern, also known as Clean Architecture."
 
         const val repositoryOwner: String = "jahrim"
-        const val repositoryName: String = "scala3-project-template"
+        const val repositoryName: String = "hexarc"
 
         const val artifactGroup: String = "io.github.jahrim"
-        const val artifactId: String = "scala3-project-template"
+        const val artifactId: String = "hexarc"
         const val implementationClass: String = "main.MainClass"
 
         const val license = "The MIT License"
         const val licenseUrl = "https://opensource.org/licenses/MIT"
 
         val website = "https://github.com/$repositoryOwner/$repositoryName"
-        val tags = listOf("scala3", "project template")
+        val tags = listOf("scala3", "service", "hexagonal architecture", "clean architecture")
     }
 }
 
@@ -77,7 +77,6 @@ publishing {
     publications {
         withType<MavenPublication> {
             pom {
-                // TODO change developers
                 developers {
                     developer {
                         name.set("Jahrim Gabriele Cesario")
