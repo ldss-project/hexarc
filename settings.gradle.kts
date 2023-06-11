@@ -1,1 +1,2 @@
-rootProject.name = "scala-project"
+// TODO change project name
+rootProject.name = "scala3-project"
