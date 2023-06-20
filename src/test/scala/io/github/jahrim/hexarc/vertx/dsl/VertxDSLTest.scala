@@ -29,7 +29,7 @@ class VertxDSLTest extends AbstractTest:
           request[Boolean]("http/isOn", null)
             .map(message => message.body)
             .await
-            .getOrElse(false)
+            .getOrElse { fail() }
         assert(!isOn)
       }
     }
@@ -40,7 +40,7 @@ class VertxDSLTest extends AbstractTest:
           request[Boolean]("mqtt/isOn", null)
             .map(message => message.body)
             .await
-            .getOrElse(false)
+            .getOrElse { fail() }
         assert(isOn)
       }
     }
