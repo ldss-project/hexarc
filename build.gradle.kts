@@ -36,6 +36,8 @@ repositories { mavenCentral() }
 dependencies {
     compileOnly(libs.bundles.scalafmt)
     implementation(libs.scala)
+    implementation(libs.vertx)
+    implementation(libs.log)
     testImplementation(libs.scalatest)
     testImplementation(libs.scalatestplusjunit)
 }

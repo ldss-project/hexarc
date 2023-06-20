@@ -7,6 +7,8 @@ scalafmt-version = "3.7.1"                          # style checker for scala
 wartremover-version = "0.1.1"                       # code linter for scala
 git-semantic-versioning-version = "1.1.9"           # assigns a project version depending on the existing git tags
 publish-on-central-version = "5.0.7"                # simplifies publishing artifacts on maven central
+vertx-version = "4.4.0"                             # event-loop framework for services
+log-version = "1.2.10"                              # logging service
 # insert the version of the dependencies here...
 
 [libraries]
@@ -15,6 +17,8 @@ scalatest = { module = "org.scalatest:scalatest_3", version.ref = "scalatest-ver
 scalatestplusjunit = { module = "org.scalatestplus:junit-4-13_3", version.ref = "scalatestplusjunit-version" }
 scalafmt-cli = { module = "org.scalameta:scalafmt-cli_2.13", version.ref = "scalafmt-version" }
 scalafmt-config = { module = "org.scalameta:scalafmt-config_2.13", version.ref = "scalafmt-version" }
+vertx = { module = "io.vertx:vertx-core", version.ref = "vertx-version" }
+log = { module = "ch.qos.logback:logback-classic", version.ref = "log-version" }
 # insert the dependencies here...
 
 [bundles]
