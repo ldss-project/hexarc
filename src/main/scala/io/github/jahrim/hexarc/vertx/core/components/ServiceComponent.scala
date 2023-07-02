@@ -1,6 +1,4 @@
-package io.github.jahrim.hexarc.vertx.components
-
-import io.github.jahrim.hexarc.vertx.dsl.VertxDSL
+package io.github.jahrim.hexarc.vertx.core.components
 
 /**
  * A component of a [[VertxService]].
@@ -17,7 +15,8 @@ trait ServiceComponent[C <: ServiceComponentContext]:
    * @param context the context required for the initialization of this [[ServiceComponent]].
    * @note this method should be called by the [[VertxService]] which owns this [[ServiceComponent]].
    *
-   *       When using the [[VertxDSL]], such configuration process will be handled automatically.
+   *       When using the [[io.github.jahrim.hexarc.vertx.core.dsl.VertxDSL VertxDSL]], such
+   *       configuration process will be handled automatically.
    */
   final def start(context: C): Unit =
     this._context = Some(context)

@@ -1,4 +1,4 @@
-package io.github.jahrim.hexarc.vertx.components
+package io.github.jahrim.hexarc.vertx.core.components
 
 import io.vertx.core.Vertx
 

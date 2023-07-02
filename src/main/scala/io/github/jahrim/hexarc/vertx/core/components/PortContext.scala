@@ -1,4 +1,4 @@
-package io.github.jahrim.hexarc.vertx.components
+package io.github.jahrim.hexarc.vertx.core.components
 
 /** The initialization context of a [[Port]]. */
 trait PortContext extends ServiceComponentContext:
@@ -13,7 +13,7 @@ object PortContext:
    * @return a new initialization context for a [[Port]].
    */
   def apply(name: String)(service: ServiceContext): PortContext =
-    BasicPortContext(s"${service.name}-$name", service)
+    BasicPortContext(name, service)
 
   /** Basic implementation of a [[PortContext]]. */
   private case class BasicPortContext(

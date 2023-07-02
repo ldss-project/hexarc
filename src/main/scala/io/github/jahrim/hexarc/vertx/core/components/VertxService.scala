@@ -1,7 +1,6 @@
-package io.github.jahrim.hexarc.vertx.components
+package io.github.jahrim.hexarc.vertx.core.components
 
 import io.github.jahrim.hexarc.logging.Logging
-import io.github.jahrim.hexarc.vertx.components.PortContext
 import io.vertx.core.{Verticle, AbstractVerticle, Promise, Vertx}
 
 /**

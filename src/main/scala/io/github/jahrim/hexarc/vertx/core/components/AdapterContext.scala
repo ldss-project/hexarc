@@ -1,4 +1,4 @@
-package io.github.jahrim.hexarc.vertx.components
+package io.github.jahrim.hexarc.vertx.core.components
 
 /**
  * The initialization context of an [[Adapter Adapter]].
@@ -22,7 +22,7 @@ object AdapterContext:
    * @return a new initialization context for an [[Adapter]].
    */
   def apply[P <: Port](name: String, api: P)(port: PortContext): AdapterContext[P] =
-    BasicAdapterContext(s"${port.name}-$name", api, port)
+    BasicAdapterContext(name, api, port)
 
   /** Basic implementation of [[AdapterContext]]. */
   private case class BasicAdapterContext[P <: Port](
