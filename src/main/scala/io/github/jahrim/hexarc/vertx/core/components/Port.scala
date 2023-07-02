@@ -1,4 +1,4 @@
-package io.github.jahrim.hexarc.vertx.components
+package io.github.jahrim.hexarc.vertx.core.components
 
 /**
  * A port in the Hexagonal Architecture.

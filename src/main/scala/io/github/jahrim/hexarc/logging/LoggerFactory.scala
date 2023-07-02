@@ -47,16 +47,27 @@ object LoggerFactory:
       .getOrElse { anonymousNameOf(clazz) }
 
   /**
+   * @param clazz     the specified class.
+   * @param canonical true if the canonical name of the interface should returned; false
+   *                  if the simple name of the interface should be returned.
+   * @return the logger name of the closest interface implemented by the specified class.
+   */
+  def interfaceNameOf(clazz: Class[_], canonical: Boolean = true): String =
+    clazz.getInterfaces.lastOption.map(nameOf(_, canonical)).getOrElse("Class")
+
+  /**
    * @param clazz the specified anonymous class.
    * @return the logger name of the specified anonymous class.
    */
   private def anonymousNameOf(clazz: Class[_]): String =
-    s"Anonymous${clazz.getInterfaces.lastOption.map(_.getSimpleName).getOrElse("Class")}"
+    s"Anonymous${interfaceNameOf(clazz, false)}"
 
   /**
    * @param name the specified name.
    * @return a new unique name derived from the specified name.
    */
   private def createUniqueName(name: String): String =
-    LoggerFactory.LoggerCount = LoggerFactory.LoggerCount + 1
-    s"{#${LoggerFactory.LoggerCount}} $name"
+    LoggerFactory.synchronized {
+      LoggerFactory.LoggerCount = LoggerFactory.LoggerCount + 1
+      s"$name#${LoggerFactory.LoggerCount.toHexString}"
+    }
