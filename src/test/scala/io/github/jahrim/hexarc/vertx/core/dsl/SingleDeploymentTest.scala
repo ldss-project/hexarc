@@ -1,14 +1,6 @@
 package io.github.jahrim.hexarc.vertx.core.dsl
 
 import io.github.jahrim.hexarc.vertx.core.dsl.examples.ColoredLampService.*
-import Ports.{LampSwitchPort, LampColorPort}
-import Models.ColoredLampModel
-import Adapters.{
-  LampSwitchHttpAdapter,
-  LampSwitchMqttAdapter,
-  LampColorHttpAdapter,
-  LampColorMqttAdapter
-}
 import io.github.jahrim.hexarc.vertx.core.dsl.Deployment
 
 /** A test for deploying a single service using the [[VertxDSL]]. */
