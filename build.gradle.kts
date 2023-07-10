@@ -1,27 +1,27 @@
 // ### Project Information #############################################################################################
 private class ProjectInfo {
-    companion object {
-        const val longName: String = "HexArc"
-        const val description: String = "Utility module for instantiating services following the best practices of the Hexagonal Architecture Pattern, also known as Clean Architecture."
+    val longName: String = "HexArc"
+    val description: String = "Utility module for instantiating services following the best practices of the Hexagonal Architecture Pattern, also known as Clean Architecture."
 
-        const val repositoryOwner: String = "jahrim"
-        const val repositoryName: String = "hexarc"
+    val repositoryOwner: String = "jahrim"
+    val repositoryName: String = "hexarc"
 
-        const val artifactGroup: String = "io.github.jahrim"
-        const val artifactId: String = "hexarc"
-        const val implementationClass: String = "main.MainClass"
+    val artifactGroup: String = "io.github.jahrim"
+    val artifactId: String = project.name
+    val implementationClass: String = "main.MainClass"
 
-        const val license = "The MIT License"
-        const val licenseUrl = "https://opensource.org/licenses/MIT"
+    val license = "The MIT License"
+    val licenseUrl = "https://opensource.org/licenses/MIT"
 
-        val website = "https://github.com/$repositoryOwner/$repositoryName"
-        val tags = listOf("scala3", "service", "hexagonal architecture", "clean architecture")
-    }
+    val website = "https://github.com/$repositoryOwner/$repositoryName"
+    val tags = listOf("scala3", "service", "hexagonal architecture", "clean architecture")
 }
+private val projectInfo: ProjectInfo = ProjectInfo()
 
 // ### Build Configuration #############################################################################################
 plugins {
     with(libs.plugins){
+        `java-library`
         scala
         application
         alias(spotless)
@@ -36,14 +36,14 @@ repositories { mavenCentral() }
 dependencies {
     compileOnly(libs.bundles.scalafmt)
     implementation(libs.scala)
-    implementation(libs.vertx)
-    implementation(libs.log)
+    api(libs.vertx)
+    api(libs.log)
     testImplementation(libs.scalatest)
     testImplementation(libs.scalatestplusjunit)
 }
 
 application {
-    mainClass.set(ProjectInfo.implementationClass)
+    mainClass.set(projectInfo.implementationClass)
 }
 
 spotless {
@@ -53,7 +53,7 @@ spotless {
 }
 
 // ### Publishing ######################################################################################################
-group = ProjectInfo.artifactGroup
+group = projectInfo.artifactGroup
 gitSemVer {
     buildMetadataSeparator.set("-")
     assignGitSemanticVersion()
@@ -66,12 +66,12 @@ tasks.javadocJar {
 
 publishOnCentral {
     configureMavenCentral.set(true)
-    projectDescription.set(ProjectInfo.description)
-    projectLongName.set(ProjectInfo.longName)
-    licenseName.set(ProjectInfo.license)
-    licenseUrl.set(ProjectInfo.licenseUrl)
-    repoOwner.set(ProjectInfo.repositoryOwner)
-    projectUrl.set(ProjectInfo.website)
+    projectDescription.set(projectInfo.description)
+    projectLongName.set(projectInfo.longName)
+    licenseName.set(projectInfo.license)
+    licenseUrl.set(projectInfo.licenseUrl)
+    repoOwner.set(projectInfo.repositoryOwner)
+    projectUrl.set(projectInfo.website)
     scmConnection.set("scm:git:$projectUrl")
 }
 
