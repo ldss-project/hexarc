@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.scala)
     api(libs.vertx)
     api(libs.log)
+    api(libs.mongodb.client)
     testImplementation(libs.scalatest)
     testImplementation(libs.scalatestplusjunit)
 }
@@ -50,6 +51,10 @@ spotless {
     isEnforceCheck = false
     scala { scalafmt(libs.versions.scalafmt.version.get()).configFile(".scalafmt.conf") }
     tasks.compileScala.get().dependsOn(tasks.spotlessApply)
+}
+
+tasks.withType<ScalaCompile>().configureEach {
+    scalaCompileOptions.additionalParameters.add("-feature")
 }
 
 // ### Publishing ######################################################################################################
