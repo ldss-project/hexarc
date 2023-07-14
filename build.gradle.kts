@@ -53,10 +53,6 @@ spotless {
     tasks.compileScala.get().dependsOn(tasks.spotlessApply)
 }
 
-tasks.withType<ScalaCompile>().configureEach {
-    scalaCompileOptions.additionalParameters.add("-feature")
-}
-
 // ### Publishing ######################################################################################################
 group = projectInfo.artifactGroup
 gitSemVer {

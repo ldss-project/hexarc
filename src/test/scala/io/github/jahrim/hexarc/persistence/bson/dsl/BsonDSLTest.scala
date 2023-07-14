@@ -64,7 +64,7 @@ class BsonDSLTest extends AbstractTest:
           .append(
             "typedSequenceField",
             BsonArray(
-              java.util.List.of(
+              java.util.Arrays.asList(
                 BsonInt32(int0),
                 BsonInt32(int1),
                 BsonInt32(int2)
@@ -74,7 +74,7 @@ class BsonDSLTest extends AbstractTest:
           .append(
             "untypedSequenceField",
             BsonArray(
-              java.util.List.of(
+              java.util.Arrays.asList(
                 BsonInt32(int),
                 BsonInt64(long),
                 BsonString(string)
