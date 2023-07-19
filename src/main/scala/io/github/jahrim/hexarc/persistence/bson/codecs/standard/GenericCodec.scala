@@ -1,6 +1,6 @@
-package io.github.jahrim.hexarc.persistence.bson.codec.standard
+package io.github.jahrim.hexarc.persistence.bson.codecs.standard
 
-import io.github.jahrim.hexarc.persistence.bson.codec.{BsonDecoder, BsonEncoder}
+import io.github.jahrim.hexarc.persistence.bson.codecs.{BsonDecoder, BsonEncoder}
 import org.bson.BsonValue
 
 /** [[BsonValue]] generic codec. */

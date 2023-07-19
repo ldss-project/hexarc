@@ -1,112 +1,132 @@
 package io.github.jahrim.hexarc.persistence.bson.dsl
 
-import io.github.jahrim.hexarc.persistence.bson.codec.BsonEncoder
-import org.bson.conversions.Bson
+import io.github.jahrim.hexarc.persistence.bson.codecs.BsonEncoder
 import org.bson.{BsonArray, BsonDocument, BsonElement, BsonValue}
 
 import scala.annotation.targetName
 import scala.jdk.CollectionConverters.SeqHasAsJava
 
 /**
- * A DSL for creating [[Bson]] documents.
+ * A DSL for creating [[BsonDocument]]s.
  *
- * @example Creating a [[Bson]] document: {{{
+ * @example Creating a [[BsonDocument]]: {{{
  *   import BsonDSL.{*, given}
- *   val myBson: Bson = bson {
+ *   val document: BsonDocument = bson {
  *     "booleanField" :: true
  *     "stringField" :: "value"
  *     "intField" :: 10
  *     "longField" :: 10_000_000_000_000L
  *     "doubleField" :: 0.33D
- *     "dateField" :: ZonedDateTime.parse("2023-12-25T12:00:00Z")
- *     "arrayField" :: array(1, false, "string")
- *     "documentField" :: bson { "subfield" :: 0 }
+ *     "dateField" :: java.time.Instant.now
+ *     "arrayField1" :: array(1,2,3)
+ *     "arrayField2" :* (1,2,3)
+ *     "objectField1" :: bson { "subfield" :: 0 }
+ *     "objectField2" :# { "subfield" :: 0 }
  *   }
  * }}}
  */
 object BsonDSL:
   // Bson Codecs
-  export io.github.jahrim.hexarc.persistence.bson.codec.standard.BooleanCodec.given
-  export io.github.jahrim.hexarc.persistence.bson.codec.standard.DoubleCodec.given
-  export io.github.jahrim.hexarc.persistence.bson.codec.standard.GenericCodec.*
-  export io.github.jahrim.hexarc.persistence.bson.codec.standard.IntCodec.given
-  export io.github.jahrim.hexarc.persistence.bson.codec.standard.JavaBooleanCodec.given
-  export io.github.jahrim.hexarc.persistence.bson.codec.standard.JavaDoubleCodec.given
-  export io.github.jahrim.hexarc.persistence.bson.codec.standard.JavaIntegerCodec.given
-  export io.github.jahrim.hexarc.persistence.bson.codec.standard.JavaLongCodec.given
-  export io.github.jahrim.hexarc.persistence.bson.codec.standard.LongCodec.given
-  export io.github.jahrim.hexarc.persistence.bson.codec.standard.SeqCodec.given
-  export io.github.jahrim.hexarc.persistence.bson.codec.standard.StringCodec.given
-  export io.github.jahrim.hexarc.persistence.bson.codec.standard.ZonedDateTimeCodec.given
+  export io.github.jahrim.hexarc.persistence.bson.codecs.standard.BooleanCodec.given
+  export io.github.jahrim.hexarc.persistence.bson.codecs.standard.BsonCodec.given
+  export io.github.jahrim.hexarc.persistence.bson.codecs.standard.BsonValueCodec.given
+  export io.github.jahrim.hexarc.persistence.bson.codecs.standard.DoubleCodec.given
+  export io.github.jahrim.hexarc.persistence.bson.codecs.standard.GenericCodec.*
+  export io.github.jahrim.hexarc.persistence.bson.codecs.standard.IntCodec.given
+  export io.github.jahrim.hexarc.persistence.bson.codecs.standard.JavaBooleanCodec.given
+  export io.github.jahrim.hexarc.persistence.bson.codecs.standard.JavaDoubleCodec.given
+  export io.github.jahrim.hexarc.persistence.bson.codecs.standard.JavaIntegerCodec.given
+  export io.github.jahrim.hexarc.persistence.bson.codecs.standard.JavaLongCodec.given
+  export io.github.jahrim.hexarc.persistence.bson.codecs.standard.LongCodec.given
+  export io.github.jahrim.hexarc.persistence.bson.codecs.standard.SeqCodec.given
+  export io.github.jahrim.hexarc.persistence.bson.codecs.standard.StringCodec.given
+  export io.github.jahrim.hexarc.persistence.bson.codecs.standard.InstantCodec.given
   export BsonExtension.{*, given}
 
-  /** @return an empty [[Bson]] document. */
-  def emptyBson: Bson = bson {}
+  /** @return an empty [[BsonDocument]]. */
+  def emptyBson: BsonDocument = bson {}
 
   /**
-   * Create a new [[Bson]] document defined by the specified [[BsonSpecification]].
+   * Create a new [[BsonDocument]] defined by the specified [[BsonSpecification]].
    *
    * @param specification the specified [[BsonSpecification]].
-   * @return a new [[Bson]] document defined by the specified [[BsonSpecification]].
+   * @return a new [[BsonDocument]] defined by the specified [[BsonSpecification]].
    */
-  def bson(specification: BsonSpecification ?=> Unit): Bson =
+  def bson(specification: BsonSpecification ?=> Unit): BsonDocument =
     val specificationContext: BsonSpecification = BsonSpecification()
     specification(using specificationContext)
     parse(specificationContext)
 
   /**
-   * Create a new [[BsonArray]] containing the specified [[BsonValue]]s.
+   * Create a new [[BsonArray]] containing the specified typed values,
+   * given a proper [[BsonEncoder]] for their type.
    *
-   * @param values the specified [[BsonValue]]s.
-   * @return a new [[BsonArray]] containing the specified [[BsonValue]]s.
-   * @note this method allows to convert an heterogeneous vararg sequence
-   *       of values into a sequence of [[BsonValue]]s.
-   *       While attempting to do the same with an heterogeneous [[Seq]]
-   *       (e.g. of [[Any]]s), the conversion will fail unless a proper
-   *       [[BsonEncoder]] is provided (e.g. a [[BsonEncoder]] for
-   *       [[Any]]s).
+   * @param values the specified values.
+   * @tparam T the type of the specified typed values.
+   * @return a new [[BsonArray]] containing the specified values.
    */
-  def array(values: BsonValue*): BsonValue = values.toSeq
+  def array[T: BsonEncoder](values: T*): BsonArray = seqEncoder.encode(values).asArray
 
-  extension (self: Bson) {
+  extension (self: BsonDocument) {
 
     /**
-     * Update this [[Bson]] document with the specified update
+     * Update this [[BsonDocument]] with the specified update
      * [[BsonSpecification]].
      *
      * @param specification the specified update [[BsonSpecification]].
-     * @return a new [[Bson]] document obtained by applying the specified
-     *         [[BsonSpecification]] to this [[Bson]] document.
-     * @note this method creates a new [[Bson]] document, leaving this
-     *       [[Bson]] document unchanged.
+     * @return a new [[BsonDocument]] obtained by applying the specified
+     *         [[BsonSpecification]] to this [[BsonDocument]].
+     * @note this method creates a new [[BsonDocument]], leaving this
+     *       [[BsonDocument]] unchanged.
      */
-    def update(specification: BsonSpecification ?=> Unit): Bson =
-      val copy: Bson = self.clone()
-      copy.putAll(bson {
-        specification
-      })
+    def update(specification: BsonSpecification ?=> Unit): BsonDocument =
+      val copy: BsonDocument = self.clone()
+      copy.putAll(bson { specification })
       copy
   }
 
   extension (key: String) {
 
     /**
-     * Bind this key to the specified value within the given
-     * [[BsonSpecification]].
+     * Bind this key to the specified typed value within the given
+     * [[BsonSpecification]], given a proper [[BsonEncoder]] for its type.
      *
      * @param value         the specified value.
      * @param specification the given [[BsonSpecification]].
+     * @tparam T the type of the specified typed values.
      */
     @targetName("bindToValue")
-    infix def ::(value: BsonValue)(using specification: BsonSpecification): Unit =
-      specification.define(key, value)
+    infix def ::[T: BsonEncoder](value: T)(using specification: BsonSpecification): Unit =
+      specification.define(key, summon[BsonEncoder[T]].encode(value))
+
+    /**
+     * As [[::]] but binds this key to a [[BsonDocument]].
+     * In particular,
+     * {{{ bson { "object" :# { "field" :: 1 } } }}}
+     * is a shortcut equivalent to
+     * {{{ bson { "object" :: bson { "field" :: 1 } } }}}
+     */
+    @targetName("bindToDocument")
+    infix def :#(specification: BsonSpecification ?=> Unit)(using BsonSpecification): Unit =
+      key :: bson { specification }
+
+    /**
+     * As [[::]] but binds this key to a [[BsonArray]].
+     * In particular,
+     * {{{ bson { "array" :* (1,2,3) } }}}
+     * is a shortcut equivalent to
+     * {{{ bson { "field" :: array(1,2,3) } }}}
+     */
+    @targetName("bindToArray")
+    infix def :*[T: BsonEncoder](values: T*)(using BsonSpecification): Unit =
+      key :: array(values*)
   }
 
   /**
-   * Parse the specified [[BsonSpecification]] producing a [[Bson]] document.
+   * Parse the specified [[BsonSpecification]] producing a [[BsonDocument]].
    *
    * @param specification the specified [[BsonSpecification]].
-   * @return the [[Bson]] document described by the specified [[BsonSpecification]].
+   * @return the [[BsonDocument]] described by the specified [[BsonSpecification]].
    */
-  private def parse(specification: BsonSpecification): Bson =
+  private def parse(specification: BsonSpecification): BsonDocument =
     BsonDocument(specification.definitions.map(entry => BsonElement(entry._1, entry._2)).asJava)

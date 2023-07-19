@@ -1,8 +1,8 @@
 package io.github.jahrim.hexarc.persistence.bson.dsl
 
-import org.bson.BsonValue
+import org.bson.{BsonValue, BsonDocument}
 
-/** A specification for defining [[Bson]] documents. */
+/** A specification for defining [[BsonDocument]]s. */
 private[dsl] case class BsonSpecification(
     private var _definitions: Seq[(String, BsonValue)] = Seq()
 ):
