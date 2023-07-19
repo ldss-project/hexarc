@@ -15,6 +15,8 @@ also known as Clean Architecture.
 
 # Showcase
 
+Here a brief showcase of the library.
+
 ## Architecture Module
 
 The Architecture Module defines the components of the Hexagonal Architecture by means
@@ -30,7 +32,7 @@ To sum up, there are two basic clean rules:
 - Enable **use cases** through `Port`s.
 - Enable **technologies** through `Adapter`s.
 
-### Defining the components of service
+### Defining the components of a service
 
 Full example
 [here](https://github.com/ldss-project/hexarc/blob/master/src/test/scala/io/github/jahrim/hexarc/architecture/vertx/core/dsl/examples/ColoredLampService.scala).
