@@ -1,107 +1,31 @@
 package io.github.jahrim.hexarc.persistence.mongodb
 
+import io.github.jahrim.hexarc.persistence.PersistentCollection
 import io.github.jahrim.hexarc.persistence.bson.dsl.BsonDSL.{*, given}
-import io.github.jahrim.hexarc.persistence.bson.PersistentDocumentCollection
-
-import com.mongodb.client.model.{DeleteOptions, InsertManyOptions, InsertOneOptions, UpdateOptions}
 import com.mongodb.client.{MongoClients, MongoCollection}
 import com.mongodb.{ConnectionString, MongoClientSettings, ServerApi, ServerApiVersion}
-import org.bson.conversions.Bson
-import org.bson.{BsonBoolean, BsonDocument, BsonInt32}
+import io.github.jahrim.hexarc.persistence.mongodb.language.MongoDBQueryLanguage
+import org.bson.BsonDocument
 
 import scala.jdk.CollectionConverters.{IterableHasAsScala, SeqHasAsJava}
 import scala.util.Try
 
-/** A [[PersistentDocumentCollection]] relying on a [[https://www.mongodb.com/ MongoDB]] instance. */
+/** A [[PersistentCollection]] relying on a [[https://www.mongodb.com/ MongoDB]] instance. */
 class MongoDBPersistentCollection private (collection: MongoCollection[BsonDocument])
-    extends PersistentDocumentCollection:
+    extends PersistentCollection
+    with MongoDBQueryLanguage:
 
-  /**
-   * As [[PersistentDocumentCollection.create]].
-   *
-   * @note Available retrieval options are the following:
-   *       - bypassDocumentValidation: [[BsonBoolean]]:
-   *         see [[InsertOneOptions.bypassDocumentValidation]].
-   */
-  override def create(document: Bson, options: Bson = emptyBson): Try[Unit] =
-    Try {
-      collection.insertOne(
-        document,
-        InsertOneOptions()
-          .bypassDocumentValidation(
-            options.get("bypassDocumentValidation", false)
-          )
-      )
-    }
+  override def create(query: CreateQuery): Try[CreateQueryResult] =
+    Try { collection.insertMany(query.documents.map(_.toBsonDocument).asJava, query.options) }
 
-  /**
-   * As [[PersistentDocumentCollection.createMany]].
-   *
-   * @note Available retrieval options are the following:
-   *       - bypassDocumentValidation: [[BsonBoolean]]:
-   *         see [[InsertManyOptions.bypassDocumentValidation]].
-   *       - ordered: [[BsonBoolean]]:
-   *         see [[InsertManyOptions.ordered]].
-   */
-  override def createMany(documents: Seq[Bson], options: Bson): Try[Unit] =
-    Try {
-      collection.insertMany(
-        documents.map(bsonToBsonDocument).asJava,
-        InsertManyOptions()
-          .bypassDocumentValidation(options.get("bypassDocumentValidation", false))
-          .ordered(options.get("ordered", false))
-      )
-    }
+  override def read(query: ReadQuery): Try[ReadQueryResult] =
+    Try { collection.aggregate(query.aggregation.asJava).asScala.toSeq }
 
-  /**
-   * As [[PersistentDocumentCollection.read]].
-   *
-   * @note Available retrieval options are the following:
-   *       - skip: [[BsonInt32]]:
-   *         see [[MongoCollection.skip]].
-   *       - limit: [[BsonInt32]]:
-   *         see [[MongoCollection.limit]].
-   *       - sort: [[BsonDocument]]:
-   *         see [[MongoCollection.sort]].
-   */
-  override def read(
-      filter: Bson = emptyBson,
-      projection: Bson = emptyBson,
-      options: Bson = emptyBson
-  ): Try[Seq[Bson]] =
-    Try {
-      Seq.from(
-        collection
-          .find()
-          .filter(filter)
-          .projection(projection)
-          .skip(options.get("skip", 0))
-          .limit(options.get("limit", 0))
-          .sort(options.get("sort", emptyBson))
-          .asScala
-      )
-    }
+  override def update(query: UpdateQuery): Try[UpdateQueryResult] =
+    Try { collection.updateMany(query.filter, query.update, query.options) }
 
-  /**
-   * As [[PersistentDocumentCollection.update]].
-   *
-   * @note Available retrieval options are the following:
-   *       - bypassDocumentValidation: [[BsonBoolean]]:
-   *         see [[UpdateOptions.bypassDocumentValidation]].
-   */
-  override def update(filter: Bson, update: Bson, options: Bson = emptyBson): Try[Unit] =
-    Try {
-      collection.updateMany(
-        filter,
-        update,
-        UpdateOptions()
-          .bypassDocumentValidation(options.get("bypassDocumentValidation", false))
-      )
-    }
-
-  /** As [[PersistentDocumentCollection.delete]]. */
-  override def delete(filter: Bson, options: Bson = emptyBson): Try[Unit] =
-    Try { collection.deleteMany(filter, DeleteOptions()) }
+  override def delete(query: DeleteQuery): Try[DeleteQueryResult] =
+    Try { collection.deleteMany(query.filter, query.options) }
 
 /** Companion object of [[MongoDBPersistentCollection]]. */
 object MongoDBPersistentCollection:
@@ -126,19 +50,13 @@ object MongoDBPersistentCollection:
     Try {
       MongoClients
         .create(
-          MongoClientSettings
-            .builder()
+          MongoClientSettings.builder
             .applyConnectionString(new ConnectionString(connection))
-            .serverApi(
-              ServerApi
-                .builder()
-                .version(ServerApiVersion.V1)
-                .build()
-            )
+            .serverApi(ServerApi.builder.version(ServerApiVersion.V1).build())
             .build()
         )
         .getDatabase(database)
-        .getCollection(collection, classOf[BsonDocument])
+        .getCollection(collection)
         .toPersistentCollection
     }
 

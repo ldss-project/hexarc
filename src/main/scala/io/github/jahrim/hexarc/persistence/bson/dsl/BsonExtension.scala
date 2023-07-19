@@ -1,41 +1,29 @@
 package io.github.jahrim.hexarc.persistence.bson.dsl
 
-import io.github.jahrim.hexarc.persistence.bson.codec.BsonEncoder
-import org.bson.conversions.Bson
+import io.github.jahrim.hexarc.persistence.bson.codecs.BsonEncoder
 import org.bson.{BsonValue, BsonDocument}
 
 import scala.util.Try
 import java.util.NoSuchElementException
 
-/** Extension for [[Bson]] documents. */
+/** Extension for [[BsonDocument]]s. */
 object BsonExtension:
-
-  /** A given [[Conversion]] from [[Bson]] documents to [[BsonDocument]]s. */
-  given bsonToBsonDocument: Conversion[Bson, BsonDocument] = _.toBsonDocument
-
-  /**
-   * A given [[Conversion]] from [[BsonValue]] to [[BsonDocument]]s.
-   *
-   * @throws BsonInvalidOperationException if the [[BsonValue]] is not a [[BsonDocument]].
-   */
-  given bsonValueToBsonDocument: Conversion[BsonValue, BsonDocument] = _.asDocument
-
-  extension (self: Bson) {
+  extension (self: BsonDocument) {
 
     /**
-     * Get the value bound to the specified path within this [[Bson]] document.
+     * Get the value bound to the specified path within this [[BsonDocument]].
      *
      * @param path the specified path.
      * @return a [[Some]] containing the value bound to the specified path if
      *         present; a [[None]] otherwise.
      */
-    def apply(path: String): Option[BsonValue] = Some(self.toBsonDocument)(path)
+    def apply(path: String): Option[BsonValue] = Some(self)(path)
 
     /**
-     * As [[Bson.apply]], but throws if no value is bound to the specified path.
+     * As [[BsonDocument.apply]], but throws if no value is bound to the specified path.
      * @throws NoSuchElementException if no value is bound to the specified path.
      */
-    def require(path: String): BsonValue = Some(self.toBsonDocument).require(path)
+    def require(path: String): BsonValue = Some(self).require(path)
   }
 
   extension (self: Option[BsonValue]) {
@@ -72,7 +60,7 @@ object BsonExtension:
       Try {
         self.flatMap(doc =>
           Option(key match
-            case string: String => doc.get(string)
+            case string: String => doc.asDocument.get(string)
             case int: Int       => doc.asArray.get(int)
           )
         )

@@ -1,13 +1,12 @@
 package io.github.jahrim.hexarc.persistence.bson.dsl
 
 import test.AbstractTest
-import io.github.jahrim.hexarc.persistence.bson.codec.{BsonDecoder, BsonEncoder}
+import io.github.jahrim.hexarc.persistence.bson.codecs.{BsonDocumentDecoder, BsonDocumentEncoder}
 import io.github.jahrim.hexarc.persistence.bson.dsl.BsonDSL.{*, given}
 import io.github.jahrim.hexarc.persistence.bson.dsl.BsonDSLTest.{*, given}
-import org.bson.conversions.Bson
 import org.bson.*
 
-import java.time.ZonedDateTime
+import java.time.{Instant, ZonedDateTime}
 
 /** Template test. */
 class BsonDSLTest extends AbstractTest:
@@ -16,9 +15,8 @@ class BsonDSLTest extends AbstractTest:
   val (int, int0, int1, int2): (Int, Int, Int, Int) = (1, 10, 20, 30)
   val long: Long = 10_000_000_000_000L
   val double: Double = 0.33
-  val christmas: ZonedDateTime = ZonedDateTime.parse("2023-12-25T12:00:00Z")
+  val christmas: Instant = ZonedDateTime.parse("2023-12-25T12:00:00Z").toInstant
   val typedSequence: Seq[Int] = Seq(int0, int1, int2)
-  val untypedSequence: Seq[BsonValue] = array(int, long, string)
   val nestedObject: CustomObject = CustomObject(int, long, string)
 
   val booleanUpdate: Boolean = false
@@ -26,7 +24,7 @@ class BsonDSLTest extends AbstractTest:
   val typedSequenceUpdate: Seq[Int] = typedSequence.drop(1)
   val objectUpdate: CustomObject = CustomObject(int, int, int.toString)
 
-  val testBson: Bson = bson {
+  val testBson: BsonDocument = bson {
     "booleanField" :: boolean
     "stringField" :: string
     "intField" :: int
@@ -34,7 +32,6 @@ class BsonDSLTest extends AbstractTest:
     "doubleField" :: double
     "dateField" :: christmas
     "typedSequenceField" :: typedSequence
-    "untypedSequenceField" :: untypedSequence
     "objectField" :: nestedObject
   }
 
@@ -53,14 +50,14 @@ class BsonDSLTest extends AbstractTest:
 
   describe("A bson created using a specification") {
     it("should contain the same fields as the corresponding bson created without a specification") {
-      val bsonWithoutSpecification: Bson =
+      val bsonWithoutSpecification: BsonDocument =
         BsonDocument()
           .append("booleanField", BsonBoolean(boolean))
           .append("stringField", BsonString(string))
           .append("intField", BsonInt32(int))
           .append("longField", BsonInt64(long))
           .append("doubleField", BsonDouble(double))
-          .append("dateField", BsonDateTime(christmas.toInstant.toEpochMilli))
+          .append("dateField", BsonDateTime(christmas.toEpochMilli))
           .append(
             "typedSequenceField",
             BsonArray(
@@ -72,16 +69,6 @@ class BsonDSLTest extends AbstractTest:
             )
           )
           .append(
-            "untypedSequenceField",
-            BsonArray(
-              java.util.Arrays.asList(
-                BsonInt32(int),
-                BsonInt64(long),
-                BsonString(string)
-              )
-            )
-          )
-          .append(
             "objectField",
             BsonDocument()
               .append("subfield1", BsonInt32(int))
@@ -89,16 +76,15 @@ class BsonDSLTest extends AbstractTest:
               .append("subfield3", BsonString(string))
           )
 
-      val bsonWithSpecification: Bson = bson {
+      val bsonWithSpecification: BsonDocument = bson {
         "booleanField" :: boolean
         "stringField" :: string
         "intField" :: int
         "longField" :: long
         "doubleField" :: double
         "dateField" :: christmas
-        "typedSequenceField" :: Seq(int0, int1, int2)
-        "untypedSequenceField" :: array(int, long, string)
-        "objectField" :: bson {
+        "typedSequenceField" :* (int0, int1, int2)
+        "objectField" :# {
           "subfield1" :: int
           "subfield2" :: long
           "subfield3" :: string
@@ -115,7 +101,7 @@ class BsonDSLTest extends AbstractTest:
         assert(testBson("intField").getOrFail.as[Int] == int)
         assert(testBson("longField").getOrFail.as[Long] == long)
         assert(testBson("doubleField").getOrFail.as[Double] == double)
-        assert(testBson("dateField").getOrFail.as[ZonedDateTime] == christmas)
+        assert(testBson("dateField").getOrFail.as[Instant] == christmas)
       }
       it("should not contain non-existing fields") {
         assert(testBson("nonExistingField").isEmpty)
@@ -128,20 +114,14 @@ class BsonDSLTest extends AbstractTest:
     describe("when considering arrays") {
       it("should contain the array fields defined within the specification") {
         assert(testBson("typedSequenceField").getOrFail.as[Seq[Int]] == typedSequence)
-        assert(testBson("untypedSequenceField").getOrFail.as[Seq[BsonValue]] == untypedSequence)
       }
       it("should contain the array indexes defined within the specification") {
         assert(testBson("typedSequenceField.0").getOrFail.as[Int] == typedSequence(0))
         assert(testBson("typedSequenceField.1").getOrFail.as[Int] == typedSequence(1))
         assert(testBson("typedSequenceField.2").getOrFail.as[Int] == typedSequence(2))
-
-        assert(testBson("untypedSequenceField.0").getOrFail.as[Int] == int)
-        assert(testBson("untypedSequenceField.1").getOrFail.as[Long] == long)
-        assert(testBson("untypedSequenceField.2").getOrFail.as[String] == string)
       }
       it("should not contain non-existing indexes") {
         assert(testBson("typedSequenceField.3").isEmpty)
-        assert(testBson("untypedSequenceField.3").isEmpty)
       }
     }
 
@@ -160,11 +140,11 @@ class BsonDSLTest extends AbstractTest:
     }
 
     describe("when updated through another specification") {
-      val updatedBson: Bson = testBson.update {
+      val updatedBson: BsonDocument = testBson.update {
         "newField" :: objectUpdate
         "booleanField" :: booleanUpdate
         "typedSequence" :: typedSequenceUpdate
-        "objectField" :: bson { "subfield1" :: long }
+        "objectField" :# { "subfield1" :: long }
       }
 
       it("should reflect the updates defined within such specification") {
@@ -186,8 +166,7 @@ class BsonDSLTest extends AbstractTest:
         assert(testBson("intField").getOrFail.as[Int] == int)
         assert(testBson("longField").getOrFail.as[Long] == long)
         assert(testBson("doubleField").getOrFail.as[Double] == double)
-        assert(testBson("dateField").getOrFail.as[ZonedDateTime] == christmas)
-        assert(testBson("untypedSequenceField").getOrFail.as[Seq[BsonValue]] == untypedSequence)
+        assert(testBson("dateField").getOrFail.as[Instant] == christmas)
       }
     }
 
@@ -210,16 +189,16 @@ object BsonDSLTest:
   /** An example custom object. */
   case class CustomObject(subfield1: Int, subfield2: Long, subfield3: String)
 
-  /** [[Bson]] encoder for [[CustomObject]]s. */
-  given BsonEncoder[CustomObject] = obj =>
+  /** [[BsonDocumentEncoder]] for [[CustomObject]]s. */
+  given BsonDocumentEncoder[CustomObject] = obj =>
     bson {
       "subfield1" :: obj.subfield1
       "subfield2" :: obj.subfield2
       "subfield3" :: obj.subfield3
     }
 
-  /** [[Bson]] decoder for [[CustomObject]]s. */
-  given BsonDecoder[CustomObject] = bson =>
+  /** [[BsonDocumentDecoder]] for [[CustomObject]]s. */
+  given BsonDocumentDecoder[CustomObject] = bson =>
     CustomObject(
       bson.require("subfield1").as[Int],
       bson.require("subfield2").as[Long],
