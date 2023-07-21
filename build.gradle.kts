@@ -3,7 +3,7 @@ private class ProjectInfo {
     val longName: String = "HexArc"
     val description: String = "Utility module for instantiating services following the best practices of the Hexagonal Architecture Pattern, also known as Clean Architecture."
 
-    val repositoryOwner: String = "jahrim"
+    val repositoryOwner: String = "ldss-project"
     val repositoryName: String = "hexarc"
 
     val artifactGroup: String = "io.github.jahrim"
