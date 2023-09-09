@@ -18,7 +18,7 @@ parent: Persistence Module
 
 In HexArc, a `PersistentCollection` provides four methods corresponding to the
 [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) operations
-for accessing and updating its data, namely `create`, `read`, `update` and `read`. 
+for accessing and updating its data, namely `create`, `read`, `update` and `delete`. 
 
 The way a service can interact with a specific `PersistentCollection` depends on
 the `QueryLanguage` of the `PersistentCollection`. Still, every `QueryLanguage`
@@ -29,8 +29,8 @@ defines four types of queries corresponding to the
 - `UpdateQuery`: a query for updating entities;
 - `DeleteQuery`: a query for deleting entities.
 
-Together with the types of queries, a `QueryLanguage` defines the type of their
-results, namely `CreateQueryResult`, `ReadQueryResult`, `UpdateQueryResult`,
+Together with the types of queries, a `QueryLanguage` defines the types of their
+results, namely `CreateQueryResult`, `ReadQueryResult`, `UpdateQueryResult` and
 `DeleteQueryResult`.
 
 All these types can be accessed from the reference to the `PersistentCollection`
@@ -56,10 +56,10 @@ import io.github.jahrim.hexarc.persistence.mongodb.language.queries.CreateQuery
 import com.mongodb.client.model.{Filters, Projections, Updates, Aggregates}
 import org.bson.{BsonDocument, BsonString}
 
-// Create a Persistent Collection
+// Create a `PersistentCollection`
 val userCollection: MongoDBPersistentCollection = ???
 
-// Use the Persistent Collection
+// Use the `PersistentCollection`
 type QueryResult = userCollection.CreateQueryResult
 val queryResult: Try[QueryResult] = 
   userCollection.create(

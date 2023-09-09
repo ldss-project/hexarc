@@ -41,7 +41,7 @@ def myColoredLampService: DeploymentGroup ?=> Service =
         
       new Adapter(LampSwitchHttpAdapter()):      // exposed by a new adapter of type <LampSwitchHttpAdapter>
         name = "Http"                              // named "Http"
-      new Adapter(LampSwitchMqttAdapter()):      // also, exposed by a new adapter of type <LampSwitchMqttAdapter>
+      new Adapter(LampSwitchMqttAdapter()):      // also, by a new adapter of type <LampSwitchMqttAdapter>
         name = "Mqtt"                              // named "Mqtt"
         
     new Port[LampColorPort]:                   // also, with a new use-case of type [LampColorPort]
@@ -50,6 +50,6 @@ def myColoredLampService: DeploymentGroup ?=> Service =
         
       new Adapter(LampColorHttpAdapter()):       // exposed by a new adapter of type <LampColorHttpAdapter>
         name = "Http"                              // named "Http"
-      new Adapter(LampColorMqttAdapter()):       // also, exposed by a new adapter of type <LampSwitchMqttAdapter>
+      new Adapter(LampColorMqttAdapter()):       // also, by a new adapter of type <LampSwitchMqttAdapter>
         name = "Mqtt"                              // named "Mqtt"
 ```

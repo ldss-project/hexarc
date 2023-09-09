@@ -16,8 +16,8 @@ parent: Persistence Module
 
 ## Working with BSON Documents
 
-Along with the other tools, HexArc also provides a DSL, to work with [BSON](https://bsonspec.org/)
-documents much faster and in a more declarative way with respect to
+Along with the other tools, HexArc also provides a DSL to work with [BSON](https://bsonspec.org/)
+documents in a more declarative way and with less boilerplate code with respect to
 [Mongo Java Driver](https://www.mongodb.com/docs/drivers/java/sync/current/).
 This DSL is called `BsonDSL`.
 
@@ -38,7 +38,7 @@ documents using the `BsonDSL`.
 import io.github.jahrim.hexarc.persistence.bson.dsl.BsonDSL.{*, given}
 import org.bson.*
 
-// Creating documents without BsonDSL
+// Creating documents without `BsonDSL`
 val documentWithoutDSL: BsonDocument =
   BsonDocument()
     .append("booleanField", BsonBoolean(true))
@@ -60,17 +60,17 @@ val documentWithoutDSL: BsonDocument =
       .append("subfield", BsonInt32(0))
     )
 
-// Creating documents with BsonDSL
+// Creating documents with `BsonDSL`
 val documentWithDSL: BsonDocument = 
   bson {
     "booleanField" :: true                 // declare a boolean
     "stringField" :: "value"               // declare a string
-    "intField" :: 10                       // declare an int32
-    "longField" :: 10_000_000_000_000L     // declare an int64
+    "intField" :: 10                       // declare an integer
+    "longField" :: 10_000_000_000_000L     // declare a long
     "doubleField" :: 0.33D                 // declare a double
     "dateField" :: java.time.Instant.now   // declare a date
-    "arrayField1" :: array(1,2,3)          // declare an homogeneous array
-    "arrayField2" :* (1,2,3)               // shortcut syntax for declaring an homogeneous array
+    "arrayField1" :: array(1,2,3)          // declare a homogeneous array
+    "arrayField2" :* (1,2,3)               // shortcut syntax for declaring a homogeneous array
     "objectField1" :: bson {               // declare an object
       "subfield" :: 0
     }
@@ -85,21 +85,24 @@ Full example [here](https://github.com/ldss-project/hexarc/blob/master/src/test/
 #### Accessing BSON Documents
 
 ```scala
-// Accessing an element via `apply` retrieves an Option[BsonValue]
+val document: BsonDocument = documentWithDSL
+
+// Accessing an element via `apply` retrieves an `Option[BsonValue]`.
 val bsonBooleanOption: Option[BsonValue] = document("booleanField")
 
-// BsonValues can be decoded via the method as[T]
+// `BsonValue`s can be decoded into objects via the method `as[T]`.
+// Objects can be encoded back to `BsonValue`s via the method `asBson`.
 val booleanOption: Option[Boolean] = bsonBooleanOption.map(_.as[Boolean])
 
-// Accessing an element via `require` retrieves a BsonValue or throws
-// a NoSuchElementException.
+// Accessing an element via `require` retrieves a `BsonValue` or throws
+// a `NoSuchElementException`.
 val boolean: Boolean = document.require("booleanField").as[Boolean]
 
-// Option[BsonValue] can also be accessed via `apply` for accessing nested
-// elements
+// `Option[BsonValue]`s can also be accessed via `apply` for accessing nested
+// elements.
 val subfieldOption: Option[BsonValue] = document("objectField1")("subField")
 
-// Field paths are also accepted to access an element.
+// Field paths are also accepted to access nested elements.
 val subfield: Int = document.require("objectField1.subField").as[Int]
 ```
 
@@ -138,9 +141,9 @@ import org.bson.BsonDocument
 // Define a custom class and its codec
 case class CustomObject(subfield1: Int, subfield2: Long, subfield3: String)
 
-/** Codec for [[CustomObject]]. */
+/** Codec for `CustomObject`. */
 object CustomObjectCodec:
-  /** A [[BsonEncoder]] converting [[CustomObject]]s to [[BsonDocument]]s. */
+  /** A `BsonEncoder` converting `CustomObject`s to `BsonDocument`s. */
   given BsonDocumentEncoder[CustomObject] = obj =>
     bson {
       "subfield1" :: obj.subfield1
@@ -148,7 +151,7 @@ object CustomObjectCodec:
       "subfield3" :: obj.subfield3
     }
 
-  /** A [[BsonDecoder]] converting [[BsonDocument]]s to [[CustomObject]]s. */
+  /** A `BsonDecoder` converting `BsonDocument`s to `CustomObject`s. */
   given BsonDocumentDecoder[CustomObject] = bson =>
     CustomObject(
       bson.require("subfield1").as[Int],
@@ -167,4 +170,4 @@ val customObject: CustomObject =
 > **Note**: defining `BsonDocumentEncoder`s and `BsonDocumentDecoder`s is required
 > to provide a custom codec for `BsonDocument`s. In order to provide a custom codec
 > for _primitive types_, it's possible to use the more general `BsonEncoder`s and
-> `BsonDecoder`s, which handle conversion from and to `BsonValue`s.
+> `BsonDecoder`s, which handle conversions from and to `BsonValue`s.

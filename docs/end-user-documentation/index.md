@@ -3,6 +3,7 @@ title: End User Documentation
 layout: default
 nav_order: 2
 has_children: true
+has_toc: false
 ---
 
 # End User Documentation
@@ -11,7 +12,7 @@ has_children: true
 This chapter will briefly present the main concepts of the HexArc framework 
 and discuss its core functionalities from the perspective of the end user.
 
-## Contenuti
+## Table of Contents
 {: .no_toc}
 
 - TOC
@@ -22,13 +23,12 @@ and discuss its core functionalities from the perspective of the end user.
 ## Introduction
 
 HexArc is a [Scala 3](https://www.scala-lang.org/) framework for declaring and deploying
-services in a declarative way, while adhering to the best practices of the
-[Hexagonal Architecture]((https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)))
-(also known as Clean Architecture), defining clear boundaries between the affordances
+services in a declarative way, while adhering to the best practices of the _Hexagonal Architecture_
+(also known as _Clean Architecture_), defining clear boundaries between the affordances
 of a service and expressing their intra-service and inter-service dependencies through
 loose-coupling.
 
-The HexArc framework is divided in modules, each providing different tools for
+The HexArc framework is divided into modules, each providing different tools for
 controlling the complexities of a service and tackling the problem of expressing 
 particular types of dependency as weak dependencies.
 
@@ -36,12 +36,12 @@ The main modules provided by the HexArc framework are the following:
 - **Architecture Module**
     
   The `Architecture Module` is the core module of the HexArc framework.
-  It defines the main concepts of the [Hexagonal Architecture](https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)),
-  providing DSLs to easily configure and deploy services.
+  It defines the main concepts of the Hexagonal Architecture, making the design of services
+  cleaner and providing DSLs to easily configure and deploy services.
 
   In HexArc, a service is made of two types of components:
   - `Port`s : the possible perspectives on the business logic of the service, implemented
-    by corresponding models.
+    by corresponding _models_.
   - `Adapter`s : the technologies enabled for interacting with the `Port`s of the service.
     
   To simplify, when defining a service, consider to:
@@ -64,7 +64,7 @@ The main modules provided by the HexArc framework are the following:
   [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) operations, namely
   `create`, `read`, `update` and `delete`.
 
-On top of the abstract concepts provided to solve dependency problems, each module may also already
+On top of the abstract concepts provided to solve the dependency problems, each module may also already
 provide implementations of such concepts to support specific technologies, without the end user
 needing to implement them himself.
 
