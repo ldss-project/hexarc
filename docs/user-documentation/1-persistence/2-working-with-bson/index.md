@@ -63,18 +63,18 @@ val documentWithoutDSL: BsonDocument =
 // Creating documents with `BsonDSL`
 val documentWithDSL: BsonDocument = 
   bson {
-    "booleanField" :: true                 // declare a boolean
-    "stringField" :: "value"               // declare a string
-    "intField" :: 10                       // declare an integer
-    "longField" :: 10_000_000_000_000L     // declare a long
-    "doubleField" :: 0.33D                 // declare a double
-    "dateField" :: java.time.Instant.now   // declare a date
-    "arrayField1" :: array(1,2,3)          // declare a homogeneous array
-    "arrayField2" :* (1,2,3)               // shortcut syntax for declaring a homogeneous array
-    "objectField1" :: bson {               // declare an object
+    "booleanField" :: true                 // define a boolean
+    "stringField" :: "value"               // define a string
+    "intField" :: 10                       // define an integer
+    "longField" :: 10_000_000_000_000L     // define a long
+    "doubleField" :: 0.33D                 // define a double
+    "dateField" :: java.time.Instant.now   // define a date
+    "arrayField1" :: array(1,2,3)          // define a homogeneous array
+    "arrayField2" :* (1,2,3)               // shortcut syntax for defining a homogeneous array
+    "objectField1" :: bson {               // define an object
       "subfield" :: 0
     }
-    "objectField2" :# {                    // shortcut syntax for declaring an object
+    "objectField2" :# {                    // shortcut syntax for defining an object
       "subfield" :: 0
     }       
   }

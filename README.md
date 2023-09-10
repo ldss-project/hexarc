@@ -8,7 +8,7 @@
 
 ---
 
-Simple [Scala 3](https://www.scala-lang.org/) framework for the configuration and deployment of services,
-following the best practices of the Hexagonal Architecture, also known as Clean Architecture.
+[Scala 3](https://www.scala-lang.org/) framework for the configuration and deployment of services,
+following the best practices of the **Hexagonal Architecture**, also known as **Clean Architecture**.
 
 See documentation at the [repository webpage](https://ldss-project.github.io/hexarc).

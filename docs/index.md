@@ -17,7 +17,7 @@ nav_order: 1
 
 ## Introduction
 
-**HexArc** is a [Scala 3](https://www.scala-lang.org/) framework for declaring and deploying
+**HexArc** is a [Scala 3](https://www.scala-lang.org/) framework for defining and deploying
 services in a declarative way, while adhering to the best practices of the **Hexagonal Architecture**
 (also known as **Clean Architecture**), defining clear boundaries between the affordances
 of a service and expressing their intra-service and inter-service dependencies through
