@@ -26,7 +26,7 @@ functionalities provided by HexArc.
 
 ## Modules
 
-The HexArc framework is divided in independent modules, each adding different functionalities
+The HexArc framework is divided in independent **modules**, each adding different functionalities
 to the framework. 
 
 A proper module should not have any dependencies on the other modules of the framework. In fact,
