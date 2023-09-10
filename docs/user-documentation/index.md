@@ -1,12 +1,12 @@
 ---
-title: End User Documentation
+title: User Documentation
 layout: default
 nav_order: 2
 has_children: true
 has_toc: false
 ---
 
-# End User Documentation
+# User Documentation
 {: .no_toc}
 
 This chapter will briefly present the main concepts of the HexArc framework 
@@ -93,11 +93,11 @@ HexArc framework for the end user.
 
 - `Architecture Module`
     - Vertx
-        - [Implementing a service](/hexarc/end-user-documentation/0-architecture/0-service-implementation)
-        - [Defining a service](/hexarc/end-user-documentation/0-architecture/1-service-definition)
-        - [Deploying a service](/hexarc/end-user-documentation/0-architecture/2-service-deployment)
+        - [Implementing a service](/hexarc/user-documentation/0-architecture/0-service-implementation)
+        - [Defining a service](/hexarc/user-documentation/0-architecture/1-service-definition)
+        - [Deploying a service](/hexarc/user-documentation/0-architecture/2-service-deployment)
 - `Persistence Module`
     - MongoDB
-        - [Creating a Persistent Collection](/hexarc/end-user-documentation/1-persistence/0-persistent-collection-creation)
-        - [Accessing a Persistent Collection](/hexarc/end-user-documentation/1-persistence/1-persistent-collection-access)
-        - [Working with BSON documents](/hexarc/end-user-documentation/1-persistence/2-working-with-bson)
+        - [Creating a Persistent Collection](/hexarc/user-documentation/1-persistence/0-persistent-collection-creation)
+        - [Accessing a Persistent Collection](/hexarc/user-documentation/1-persistence/1-persistent-collection-access)
+        - [Working with BSON documents](/hexarc/user-documentation/1-persistence/2-working-with-bson)

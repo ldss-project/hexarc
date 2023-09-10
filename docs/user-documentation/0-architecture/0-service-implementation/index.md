@@ -2,7 +2,7 @@
 title: Implementing a service
 layout: default
 nav_order: 1
-grand_parent: End User Documentation
+grand_parent: User Documentation
 parent: Architecture Module
 ---
 

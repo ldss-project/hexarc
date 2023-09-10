@@ -2,7 +2,7 @@
 title: Persistence Module
 layout: default
 nav_order: 2
-parent: End User Documentation
+parent: User Documentation
 has_children: true
 ---
 

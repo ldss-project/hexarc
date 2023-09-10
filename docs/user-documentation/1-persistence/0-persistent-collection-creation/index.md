@@ -2,7 +2,7 @@
 title: Creating a Persistent Collection
 layout: default
 nav_order: 1
-grand_parent: End User Documentation
+grand_parent: User Documentation
 parent: Persistence Module
 ---
 
