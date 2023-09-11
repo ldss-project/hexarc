@@ -48,7 +48,8 @@ The main modules provided by the HexArc framework are the following:
   The Persistence Module is a supporting module which tackles the problems of decoupling
   the business logic of a service from specific persistent storage technologies, which are
   often required to maintain a state outside the service lifetime. Moreover, the module provides
-  DSLs to easily manipulate data inside a service.
+  tools to easily manipulate data inside a service (e.g. a DSL for working with
+  [BSON](https://bsonspec.org/) documents...).
 
   The main component of the Persistence Module is the **persistent collection**, which is
   best described as a collection whose content persist over different runs of an application.

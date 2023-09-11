@@ -224,10 +224,14 @@ To summarize, the `VertxDSL` is defined through _keywords_, where a _global_ key
 
 > #### From Functional DSL to YAML-like DSL
 >
-> One of the reasons why HexArc migrated from its original _functional_ syntax to a _YAML-like_ syntax
-> (based on the definition of anonymous classes) is **type inference**. For example, inside a `Port`
-> keyword, the `Adapter` scoped keywords automatically refer to the proper type of `Adapter` for that
-> `Port`, without requiring the user to explicit that type for each `Adapter`.
+> Initially, HexArc provided a _functional_ DSL (where keywords were pure functions), instead of the
+> current _YAML-like_ DSL (mostly based on anonymous classes).
+> 
+> One of the reasons why HexArc migrated from its original functional syntax to a YAML-like syntax is
+> **type inference**. For example, inside a `Port` keyword, the `Adapter` scoped keywords automatically
+> refer to the proper type of `Adapter` for that `Port`, without requiring the user to explicit that type
+> for each `Adapter`.
+> 
 > ```scala
 > // Original functional syntax
 > deploy(Vertx.vertx()){
