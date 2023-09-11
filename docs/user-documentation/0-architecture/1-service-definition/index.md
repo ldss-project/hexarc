@@ -31,25 +31,25 @@ import ColoredLampService.*
 
 /** Service definition. */
 def myColoredLampService: DeploymentGroup ?=> Service =
-  new Service:                                 // a new service
-    name = "ColoredLampService"                // named "ColoredLampService" (for logging purposes)
+  new Service:                              // a new service
+    name = "ColoredLampService"             // named "ColoredLampService" (for logging)
 
     val lampModel = ColoredLampModel()
-    new Port[LampSwitchPort]:                  // with a new use-case of type [LampSwitchPort]
-      name = "SwitchPort"                        // named "SwitchPort"
-      model = lampModel                          // implemented by <lampModel>
+    new Port[LampSwitchPort]:               // with a new use-case of type [LampSwitchPort]
+      name = "SwitchPort"                     // named "SwitchPort"
+      model = lampModel                       // implemented by <lampModel>
         
-      new Adapter(LampSwitchHttpAdapter()):      // exposed by a new adapter of type <LampSwitchHttpAdapter>
-        name = "Http"                              // named "Http"
-      new Adapter(LampSwitchMqttAdapter()):      // also, by a new adapter of type <LampSwitchMqttAdapter>
-        name = "Mqtt"                              // named "Mqtt"
+      new Adapter(LampSwitchHttpAdapter()):   // exposed by a new adapter <LampSwitchHttpAdapter>
+        name = "Http"                           // named "Http"
+      new Adapter(LampSwitchMqttAdapter()):   // also, by a new adapter <LampSwitchMqttAdapter>
+        name = "Mqtt"                           // named "Mqtt"
         
-    new Port[LampColorPort]:                   // also, with a new use-case of type [LampColorPort]
-      name = "ColorPort"                         // named "SwitchPort"
-      model = lampModel                          // implemented by <lampModel>
+    new Port[LampColorPort]:                // also, with a new use-case of type [LampColorPort]
+      name = "ColorPort"                      // named "SwitchPort"
+      model = lampModel                       // implemented by <lampModel>
         
-      new Adapter(LampColorHttpAdapter()):       // exposed by a new adapter of type <LampColorHttpAdapter>
-        name = "Http"                              // named "Http"
-      new Adapter(LampColorMqttAdapter()):       // also, by a new adapter of type <LampSwitchMqttAdapter>
-        name = "Mqtt"                              // named "Mqtt"
+      new Adapter(LampColorHttpAdapter()):    // exposed by a new adapter <LampColorHttpAdapter>
+        name = "Http"                           // named "Http"
+      new Adapter(LampColorMqttAdapter()):    // also, by a new adapter <LampSwitchMqttAdapter>
+        name = "Mqtt"                           // named "Mqtt"
 ```

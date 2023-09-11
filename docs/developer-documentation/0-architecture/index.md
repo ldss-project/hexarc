@@ -65,9 +65,8 @@ The main `ServiceComponent`s in a service are the following:
   **model**.
 - `Adapter`s: typically defines how the affordances of the service are exposed to its users, enabling
   technologies for communicating with one or more `Port`s of the service. This is the case of _inbound_
-  `Adapter`s, which are the most common types. However, an `Adapter` could be used also to monitor the
-  service and to communicate its events to third-party services, which is the case of _outbound_
-  `Adapter`s.
+  `Adapter`s, which are the most common types. However, an `Adapter` could also be used to monitor the
+  service and to communicate its events to other services, which is the case of _outbound_ `Adapter`s.
 - `VertxService`: it's the service itself, or at least the part of the service holding together its
   `ServiceComponent`s. In fact, this `ServiceComponent` is used internally for integrating all the
   `ServiceComponent`s of the service into a single `Verticle` that can be deployed within
@@ -75,7 +74,7 @@ The main `ServiceComponent`s in a service are the following:
   reason to personalize how the integration between the `ServiceComponent`s happens.
 
 Upon the deployment of a service, proper execution contexts, called `ServiceComponentContext`s,
-are generated for all of its `ServiceComponent`s. Then, each `ServiceComponent` is initialized
+must be provided for all of its `ServiceComponent`s. Then, each `ServiceComponent` is initialized
 consuming its corresponding `ServiceComponentContext`.
 
 A `ServiceComponentContext` may contain all sorts of useful information for initializing a
@@ -146,56 +145,89 @@ new DeploymentGroup(Vertx.vertx()):         // opening "DeploymentGroup" DSLCont
   end new                                     // closing "Service" DSLContext 
 end new                                     // closing "DeploymentGroup" DSLContext 
 ```
-> **Note**: here `DeploymentGroup`, `Service`, `Port` and `Adapter` are the keywords of the DSL.
-> In particular, `Port` and `Adapter` are not the same as their homonyms in the Components Module.
+> **Note**: here `DeploymentGroup`, `Service`, `Port`, `Adapter`, `name` and `model` are the keywords
+> of the DSL. In particular, the keywords `Port` and `Adapter` are not the same classes as their
+> homonyms in the Components Module.
 
 As introduced by the example above, HexArc defines four main types of `DSLContext`:
 - `DeploymentGroupDSLContext`: a `DSLContext.Root` describing the configuration for the deployment of
   a group of services. Such configuration consists of a list of the services that should be deployed.
   These services can then be deployed by calling `deploy` on the `DeploymentGroupDSLContext`.
 
-  The `VertxDSL.Vocabulary` exposes this type of `DSLContext` as the keyword `DeploymentGroup`. While a
-  `DeploymentGroupDSLContext` exposes the following `ServiceDSLContext` as the keyword `Service`. The
-  actual implementation relies on the definition of a type member called `Service`.
+  The `VertxDSL.Vocabulary` exposes this type of `DSLContext` as the _global_ keyword `DeploymentGroup`. While
+  a `DeploymentGroupDSLContext` exposes the following `ServiceDSLContext` as the _scoped_ keyword `Service`.
+  The actual implementation relies on the definition of a type member called `Service`.
+
+  > **Note**: in HexArc, a _global_ keyword is a keyword that can be used everywhere in the code, therefore it should
+  > be made available everywhere in the code; while a _scoped_ keyword is a keyword that requires positioning inside
+  > a specific scope, therefore it should be made available only in the scope where it is allowed to use it.
+
 - `ServiceDSLContext`: a `DSLContext.Child` of `DeploymentGroupDSLContext` describing the configuration
   for the instance of a service to be deployed. Such configuration consists of a list of the `Port`s forming
   the contract of the service. 
   
   When a `ServiceDSLContext` is opened (i.e. created) within a `DeploymentGroupDSLContext`, it
-  automatically adds itself to the services that should be deployed by the `DeploymentGroupDSLContext`.
+  automatically adds itself to the services that should be deployed by that `DeploymentGroupDSLContext`.
 
-  The `VertxDSL.Vocabulary` exposes this type of `DSLContext` as the keyword `Service`, so that it could be
-  lazily configured outside a `DeploymentGroupDSLContext`. While a `ServiceDSLContext` exposes the following
-  `PortDSLContext` as the keyword `Port`.
+  The `VertxDSL.Vocabulary` exposes this type of `DSLContext` as the global keyword `Service`, so that it
+  could be lazily configured outside a `DeploymentGroupDSLContext`. While a `ServiceDSLContext` exposes the
+  following `PortDSLContext` as the scoped keyword `Port`.
 - `PortDSLContext`: a `DSLContext.Child` of `ServiceDSLContext` describing the configuration of a `Port` of
   a service. Such configuration includes the contract exposed by the `Port` (defined as type parameter),
   the actual implementation of the `Port` and a lists of the `Adapter`s installed on the `Port`.
 
   When a `PortDSLContext` is opened within a `ServiceDSLContext`, it automatically adds itself to the `Port`s
-  of the service configured by the `ServiceDSLContext`.
+  of the service configured by that `ServiceDSLContext`.
 
-  The `VertxDSL.Vocabulary` exposes this type of `DSLContext` as the keyword `Port` (not to be confused with
-  the homonym component), so that it could be lazily configured outside a `ServiceDSLContext`. While a
-  `PortDSLContext` exposes the following `AdapterDSLContext` as the keyword `Adapter` (still, not to be confused
-  with the homonym component).
+  The `VertxDSL.Vocabulary` exposes this type of `DSLContext` as the global keyword `Port` (not to be confused
+  with the homonym component), so that it could be lazily configured outside a `ServiceDSLContext`. While a
+  `PortDSLContext` exposes the following `AdapterDSLContext` as the scoped keyword `Adapter` (still, not to be
+  confused with the homonym component). Moveover, it exposes the scoped keyword `model` for configuring its
+  actual implementation.
 
 - `AdapterDSLContext`: a `DSLContext.Child` of `PortDSLContext` describing the configuration of an
   `Adapter` of a `Port` of a service. Such configuration consists of the implementation of the
   `Adapter`.
 
   When an `AdapterDSLContext` is opened within a `PortDSLContext`, it automatically adds itself to the
-  `Adapter`s of the `Port` configured by the `PortDSLContext`.
+  `Adapter`s of the `Port` configured by that `PortDSLContext`.
 
-  The `VertxDSL.Vocabulary` exposes this type of `DSLContext` as the keyword `Adapter` (not to be confused with
-  the homonym component), so that it could be lazily configured outside a `PortDSLContext`, provided the type
+  The `VertxDSL.Vocabulary` exposes this type of `DSLContext` as the global keyword `Adapter` (not to be confused
+  with the homonym component), so that it could be lazily configured outside a `PortDSLContext`, provided the type
   of `Port` on which it can be installed.
 
-> #### Functional DSL Vs YAML-like DSL
-> 
+These last three `DSLContext`s are extended using a mixin called `NamedDSLContext`, which for each exposes a new
+scoped keyword, called `name`, for configuring the name of each `ServiceComponent` (used for creating their
+`Logger`s).
+
+As the `DSLContext`s of the `VertxDSL` are opened, a tree-like structure is generated starting from the root,
+which is always a `DeploymentGroupDSLContext`.
+
+Internally, each of the four types of `DSLContext` provide a `close` method, which is used to finalize their
+configuration. In particular, when `deploy` is called on a `DeploymentGroupDSLContext`, all of the `DSLContext`s
+belonging to its tree are closed bottom-up, configuring the corresponding `ServiceComponent`s. Finally, the
+`DeploymentGroupDSLContext` closes itself, deploying the configured services.
+
+The deployment of the services is delegated to a support class called `Deployment`. Its companion object provides
+methods for deploying services and obtaining their corresponding `Deployment`s, While, an instance of the `Deployment`
+class itself allows to undeploy the corresponding service.
+
+In addition to the `DSLContext`s, another way the `VertxDSL` enriches its syntax is by means of _extensions_.
+In particular, it exports all the extension methods provided by the `VertxDSLExtensions` object, which include methods
+for manipulating `Future`s (e.g. awaiting the deployment or un-deployment of a service...).
+
+To summarize, the `VertxDSL` is defined through _keywords_, where a _global_ keyword can be either:
+- a `DSLContext`, exposing new _scoped_ keywords in the form of:
+  - public or protected methods;
+  - public or protected type member.
+- an _extension method_ provided by some extension of the DSL.
+
+> #### From Functional DSL to YAML-like DSL
+>
 > One of the reasons why HexArc migrated from its original _functional_ syntax to a _YAML-like_ syntax
 > (based on the definition of anonymous classes) is **type inference**. For example, inside a `Port`
-> keyword, the `Adapter` keywords automatically refer to the proper type of `Adapter` for that `Port`,
-> without requiring the user to explicit that type for each `Adapter`.
+> keyword, the `Adapter` scoped keywords automatically refer to the proper type of `Adapter` for that
+> `Port`, without requiring the user to explicit that type for each `Adapter`.
 > ```scala
 > // Original functional syntax
 > deploy(Vertx.vertx()){
@@ -237,35 +269,14 @@ As introduced by the example above, HexArc defines four main types of `DSLContex
 > Other reasons of the migration include the following:
 > - **A YAML-like syntax feels more proper for representing a data structure**, such as the configuration
 >   of the deployment of a group of services. In that sense, it is also more direct to extend the DSL
->   without reducing its readability (e.g. just add a method for configuring a field in a `DSLContext`...).
+>   without reducing its readability (e.g. just add a method for configuring a field in a `DSLContext` and
+>   it won't affect how the DSL visually appears...).
 > - **A YAML-like syntax provides support for scoped keywords**. All the keywords of a functional DSL
 >   are available everywhere in the code, even though some require positioning within a specific scope.
 >   By defining keywords as type members instead of functions, it is possible to make keywords available
 >   only in the scopes where they can actually be used.
-> 
-> Of course the YAML-like syntax comes with its downsides, the most noticeable being that the
+>
+> Of course the YAML-like syntax comes with its own downsides, the most noticeable being that the
 > functional syntax still appears cleaner as it does not require the boilerplate code that a
-> YAML-like syntax does require (e.g. the `new` keyword is unfortunately mandatory for creating
-> anonymous classes in Scala 3...).
-
-By opening the `DSLContext`s of the `VertxDSL`, a tree-like structure is generated starting from the root,
-which is always a `DeploymentGroupDSLContext`.
-
-Internally, each of the four types of `DSLContext` provide a `close` method, which is used to finalize their
-configuration. In particular, when `deploy` is called on a `DeploymentGroupDSLContext`, all of the `DSLContext`s
-belonging to its tree are closed bottom-up, configuring the corresponding `ServiceComponent`s, finally the
-`DeploymentGroupDSLContext` closes itself, deploying the configured services.
-
-The deployment of the services is delegated to a support class called `Deployment`. Its companion object provides
-methods for deploying services and obtaining their corresponding `Deployment`s, While, an instance of the `Deployment`
-class itself allows to undeploy the corresponding service.
-
-In addition to the `DSLContext`s, another way the `VertxDSL` enriches its syntax is by means of _extensions_.
-In particular, it exports all the extension methods provided by the `VertxDSLExtensions` object, which include methods
-for manipulating `Future`s (e.g. awaiting the deployment or un-deployment of a service...).
-
-To summarize, the `VertxDSL` is defined through _keywords_, where a keyword can be either:
-- a `DSLContext`, exposing other _scoped keywords_ in the form of:
-  - public or protected methods;
-  - public or protected type member.
-- an _extension method_ provided by some extension of the DSL.
+> YAML-like syntax does require (e.g. as of now, the `new` keyword is unfortunately mandatory for
+> creating anonymous classes in Scala 3...).
