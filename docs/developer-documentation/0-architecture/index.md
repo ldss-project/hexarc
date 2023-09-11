@@ -120,7 +120,7 @@ meaning that its corresponding keyword can be used anywhere, or a `DSLContext.Ch
 meaning that its corresponding keyword can only be used within its parent `DSLContext`.
 
 For example, referring to the 
-[User Documentation](/hexarc/user-documentation/0-architecture/1-service-definition),
+[User Documentation](/hexarc/user-documentation/0-architecture/1-service-definition#example),
 an `Adapter` may be defined only within a `Port` and it cannot be defined as a direct
 child of a `Service`. In order to explicit when a context is closed, the example also
 reports the `end new` scala syntax, which is completely optional.
