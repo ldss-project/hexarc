@@ -156,6 +156,8 @@ this:
 ```scala
 bson {
   "stringField" :: "stringValue"
+  "intField" :: 1234
+  "objectField" :: MyCustomObject()
 }
 ```
 
@@ -180,12 +182,12 @@ In addition to the creation of `BsonDocument`s, the `BsonDSL` provides an extens
 key-value pairs to an existing `BsonDocument`.
 
 Finally, one last functionality provided by the `BsonDSL` is the ability to read key-value pairs from existing
-`BsonDocument`s. In particular, this functionality is handled within the `BsonExtension` which is exposed by the
-`BsonDSL`.
+`BsonDocument`s. In particular, this functionality is handled within an extension of the DSL, called `BsonExtension`,
+which is exposed by the `BsonDSL`.
 
 The `BsonExtension` provides two main extension methods that can be used to access the content of a `BsonDocument`:
 - `BsonDocument.apply`: retrieves the value bound to a given key or path in a `BsonDocument`, where a path is a
-  concatenation of keys separated by dots if the `BsonDocument` contains nested documents. This method is safe
+  concatenation of keys separated by dots if the `BsonDocument` contains nested documents. This method is safe,
   meaning that it returns an `Option[BsonValue]`, taking into account that the given key or path may not be bound
   to any value.
 - `Option[BsonValue].apply`: same as above, treating the `BsonValue` as a `BsonDocument` if possible. This method
@@ -203,7 +205,7 @@ The `BsonExtension` provides two main extension methods that can be used to acce
   val nestedField1: Option[BsonValue] = field("nestedField1")
   val nestedField2: Option[BsonValue] = document("field")("nestedField2")
   ```
-  Alternatively, the `BsonExtension` also provides support for the following syntax:
+  Alternatively, the `BsonExtension` also supports the following syntax:
   ```scala
   val nestedField1: Option[BsonValue] = document("field.nestedField1")
   ```
