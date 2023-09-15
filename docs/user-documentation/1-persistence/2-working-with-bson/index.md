@@ -170,4 +170,5 @@ val customObject: CustomObject =
 > **Note**: defining `BsonDocumentEncoder`s and `BsonDocumentDecoder`s is required
 > to provide a custom codec for `BsonDocument`s. In order to provide a custom codec
 > for _primitive types_, it's possible to use the more general `BsonEncoder`s and
-> `BsonDecoder`s, which handle conversions from and to `BsonValue`s.
+> `BsonDecoder`s, which handle conversions to `BsonValue`s and from `BsonValue`s
+> respectively.

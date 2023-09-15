@@ -196,9 +196,9 @@ As introduced by the example above, HexArc defines four main types of `DSLContex
   with the homonym component), so that it could be lazily configured outside a `PortDSLContext`, provided the type
   of `Port` on which it can be installed.
 
-These last three `DSLContext`s are extended using a mixin called `NamedDSLContext`, which for each exposes a new
-scoped keyword, called `name`, for configuring the name of each `ServiceComponent` (used for creating their
-`Logger`s).
+These last three `DSLContext`s are extended using a mixin called `NamedDSLContext`, which exposes a new
+scoped keyword for each them, called `name`, for configuring the name of each `ServiceComponent` (used
+for creating their `Logger`s).
 
 As the `DSLContext`s of the `VertxDSL` are opened, a tree-like structure is generated starting from the root,
 which is always a `DeploymentGroupDSLContext`.
@@ -209,7 +209,7 @@ belonging to its tree are closed bottom-up, configuring the corresponding `Servi
 `DeploymentGroupDSLContext` closes itself, deploying the configured services.
 
 The deployment of the services is delegated to a support class called `Deployment`. Its companion object provides
-methods for deploying services and obtaining their corresponding `Deployment`s, While, an instance of the `Deployment`
+methods for deploying services and obtaining their corresponding `Deployment`s, while an instance of the `Deployment`
 class itself allows to undeploy the corresponding service.
 
 In addition to the `DSLContext`s, another way the `VertxDSL` enriches its syntax is by means of _extensions_.
@@ -219,8 +219,8 @@ for manipulating `Future`s (e.g. awaiting the deployment or un-deployment of a s
 To summarize, the `VertxDSL` is defined through _keywords_, where a _global_ keyword can be either:
 - a `DSLContext`, exposing new _scoped_ keywords in the form of:
   - public or protected methods;
-  - public or protected type member.
-- an _extension method_ provided by some extension of the DSL.
+  - public or protected type members.
+- an extension method provided by some extension of the DSL.
 
 > #### From Functional DSL to YAML-like DSL
 >
@@ -281,6 +281,6 @@ To summarize, the `VertxDSL` is defined through _keywords_, where a _global_ key
 >   only in the scopes where they can actually be used.
 >
 > Of course the YAML-like syntax comes with its own downsides, the most noticeable being that the
-> functional syntax still appears cleaner as it does not require the boilerplate code that a
+> functional syntax still appears cleaner, as it does not require the boilerplate code that a
 > YAML-like syntax does require (e.g. as of now, the `new` keyword is unfortunately mandatory for
 > creating anonymous classes in Scala 3...).

@@ -52,7 +52,7 @@ A `PersistentCollection` provides four methods corresponding to the
 [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) operations, namely:
 - `create`: accepts a query for inserting some documents in the `PersistentCollection`;
 - `read`: accepts a query for retrieving some documents from the `PersistentCollection`;
-- `update`: accepts a query for modifying some documents from the `PersistentCollection`;
+- `update`: accepts a query for modifying some documents of the `PersistentCollection`;
 - `delete`: accepts a query for removing some documents from the `PersistentCollection`.
 
 A `PersistentCollection` relies on a `QueryLanguage`, which defines the types of query accepted by the
@@ -124,6 +124,7 @@ The `BsonDSL` creates a new `BsonSpecification` each time the user starts creati
 The `BsonDSL` provides two methods for creating a `BsonDocument`:
 - `emptyBson`: creates a new `BsonDocument` with no entries;
 - `bson`: creates a new `BsonDocument` configured by a context function provided as input.
+
 Moreover, it provides a method for creating `BsonArray`s, called `array`.
 
 When creating a `BsonDocument` using the `bson` method, some extension methods are made available
@@ -178,7 +179,7 @@ into its corresponding `BsonValue`, given a proper `BsonEncoder`, and a `BsonVal
 corresponding object, given a proper `BsonDecoder`. These are `T.asBson` and `BsonValue.as[T]` respectively.
 
 In addition to the creation of `BsonDocument`s, the `BsonDSL` provides an extension method for updating
-`BsonDocument`, called `BsonDocument.update`, which creates a new `BsonDocument` by replacing or adding
+`BsonDocument`s, called `BsonDocument.update`, which creates a new `BsonDocument` by replacing or adding
 key-value pairs to an existing `BsonDocument`.
 
 Finally, one last functionality provided by the `BsonDSL` is the ability to read key-value pairs from existing
